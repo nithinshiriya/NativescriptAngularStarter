@@ -1,26 +1,70 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
+import { RouterConfig, ActivatedRoute, ROUTER_DIRECTIVES } from '@angular/router';
+import { NS_ROUTER_DIRECTIVES, nsProvideRouter} from "nativescript-angular/router"
 
 @Component({
-    selector: 'navigation-test',        
-    template: `<StackLayout>
-    <Label text="Tap the button" class="title"></Label>    
-    <Button text="TAP" (tap)="onTap()"></Button>
-    <Label [text]="message" class="message" textWrap="true"></Label>
-</StackLayout>
-    `
+    selector: "first",    
+    template: `
+    <StackLayout>
+        <Label text="First component" class="title"></Label>
+    </StackLayout>`
 })
-export class AppComponent {
-    public counter: number = 16;
-
-    public get message(): string {
-        if (this.counter > 0) {
-            return this.counter + " taps left";
-        } else {
-            return "Hoorraaay! \nYou are ready to start building!";
-        }
+class FirstComponent implements OnInit, OnDestroy {
+    ngOnInit() {
+        console.log("FirstComponent - ngOnInit()");
     }
     
-    public onTap() {
-        this.counter--;
-    }    
+    ngOnDestroy() {
+        console.log("FirstComponent - ngOnDestroy()");
+    }
 }
+
+@Component({
+    selector: "second",    
+    template: `
+    <StackLayout>
+        <Label [text]="'Second component: ' + (id | async)" class="title"></Label>
+    </StackLayout>`
+})
+class SecondComponent implements OnInit, OnDestroy {
+    id;
+    constructor(route: ActivatedRoute) {
+        this.id = route.params.map(r => r["id"]);
+    }
+
+    ngOnInit() {
+        console.log("SecondComponent - ngOnInit()");
+    }
+
+    ngOnDestroy() {
+        console.log("SecondComponent - ngOnDestroy()");
+    }
+}
+
+@Component({
+    selector: 'navigation-test',
+    directives: [ROUTER_DIRECTIVES, NS_ROUTER_DIRECTIVES],    
+    template: `
+        <StackLayout>
+            <StackLayout class="nav">
+                <Button text="First" nsRouterLink="/"></Button>
+                <Button text="Second(1)" nsRouterLink="/second/1"></Button>
+                <Button text="Second(2)" [nsRouterLink]="['/second', '2' ]"></Button>
+            </StackLayout>
+            
+            <router-outlet></router-outlet>
+        </StackLayout>
+    `
+})
+export class RouterOutletAppComponent {
+}
+
+
+const routes: RouterConfig = [
+    { path: "", component: FirstComponent},
+    { path: "second/:id", component: SecondComponent },
+];
+
+export const RouterOutletRouterProviders = [
+    nsProvideRouter(routes, { enableTracing: false })
+];
