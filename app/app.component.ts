@@ -50,9 +50,8 @@ class SecondComponent implements OnInit, OnDestroy {
                 <Button text="First" nsRouterLink="/"></Button>
                 <Button text="Second(1)" nsRouterLink="/second/1"></Button>
                 <Button text="Second(2)" [nsRouterLink]="['/second', '2' ]"></Button>
-            </StackLayout>
-            
-            <router-outlet></router-outlet>
+            </StackLayout>            
+            <page-router-outlet></page-router-outlet>
         </StackLayout>
     `
 })
